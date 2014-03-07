@@ -1,0 +1,35 @@
+MODULEDIR=.
+include config.mk
+
+PROJECT_NAME=${MODULE_NAME}
+include scripts/objectsMakeppfile.mk
+include scripts/version.mk
+
+$(phony FORCE):
+    @true
+
+LIBS+=$(addprefix -l,${DEPENDENCIES})
+LDFLAGS+=-L${CURDIR}/../${DEPENDENCIES}/target/
+OWN_LIB_FILES=$(shell ./scripts/expandModules.sh ${DEPENDENCIES})
+iftrue ${DEPENDENCIES}
+	DEPENDENCY_FILES:=${CURDIR}/../${DEPENDENCIES}/target/dependencies
+	DEPLIBS=$(shell cat ${DEPENDENCY_FILES})
+else
+	DEPENDENCY_FILES:=
+	DEPLIBS:=
+endif
+
+load_makefile target/objects/Makeppfile
+load_makefile ${CURDIR}/../${DEPENDENCIES}
+
+OBJECTS:=$(shell ./scripts/findObjects.sh)
+ALLLIBS=${LIBS} ${DEPLIBS}
+
+MODULE_STATIC_LIBRARY:=lib${MODULE_NAME}.a
+
+target/${MODULE_STATIC_LIBRARY}: ${OBJECTS}
+	@if [ -e ${output} ]; then rm ${output}; echo "rm ${output}"; fi
+	${AR} ${ARFLAGS} ${output} ${OBJECTS}
+
+target/dependencies:
+    echo ${ALLLIBS} > ${output}
