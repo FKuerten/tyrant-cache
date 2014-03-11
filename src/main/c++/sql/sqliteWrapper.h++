@@ -54,9 +54,9 @@
                     void bindText(unsigned int index, std::string text);
                     void bindBool(unsigned int index, bool value);
                     void bindInt(unsigned int index, int value);
-                    void bindInt(unsigned int index, unsigned int value);
+                    //void bindInt(unsigned int index, unsigned int value);
                     void bindInt(unsigned int index, long int value);
-                    void bindInt(unsigned int index, unsigned long int value);
+                    //void bindInt(unsigned int index, unsigned long int value);
                     void bindNull(unsigned int index);
                     void execute();
                     SQLResults query();

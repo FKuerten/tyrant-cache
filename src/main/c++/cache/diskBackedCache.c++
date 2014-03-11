@@ -281,14 +281,14 @@ namespace Tyrant {
                 } else {
                     this->insertStatement->bindInt(11, 0);
                 }
-                this->insertStatement->bindInt(12, freshResult.numberOfGames);
-                this->insertStatement->bindInt(13, freshResult.gamesWon);
-                this->insertStatement->bindInt(14, freshResult.gamesStalled);
-                this->insertStatement->bindInt(15, freshResult.gamesLost);
-                this->insertStatement->bindInt(16, freshResult.pointsAttacker);
-                this->insertStatement->bindInt(17, freshResult.pointsAttackerAuto);
-                this->insertStatement->bindInt(18, freshResult.pointsDefender);
-                this->insertStatement->bindInt(19, freshResult.pointsDefenderAuto);
+                this->insertStatement->bindInt(12, static_cast<signed long>(freshResult.numberOfGames));
+                this->insertStatement->bindInt(13, static_cast<signed long>(freshResult.gamesWon));
+                this->insertStatement->bindInt(14, static_cast<signed long>(freshResult.gamesStalled));
+                this->insertStatement->bindInt(15, static_cast<signed long>(freshResult.gamesLost));
+                this->insertStatement->bindInt(16, static_cast<signed long>(freshResult.pointsAttacker));
+                this->insertStatement->bindInt(17, static_cast<signed long>(freshResult.pointsAttackerAuto));
+                this->insertStatement->bindInt(18, static_cast<signed long>(freshResult.pointsDefender));
+                this->insertStatement->bindInt(19, static_cast<signed long>(freshResult.pointsDefenderAuto));
                 this->insertStatement->execute();
                 //std::clog << "Wrote " << freshResult.numberOfGames << " to cache" << std::endl;
             }
