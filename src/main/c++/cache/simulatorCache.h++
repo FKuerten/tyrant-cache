@@ -9,9 +9,9 @@
     #include <memory>
 
     namespace C = Tyrant::Core;
-    namespace TyrantCache {
+    namespace Tyrant {
         namespace Cache {
-    
+
             class SimulatorCache : public C::SimulatorCore {
                 public:
                     typedef std::shared_ptr<SimulatorCache> Ptr;
@@ -20,9 +20,9 @@
                     C::SimulatorCore::Ptr delegate;
 
                 public:
-                    SimulatorCache(SimulatorCore::Ptr & delegate);
+                    SimulatorCache(SimulatorCore::Ptr delegate);
                     virtual ~SimulatorCache();
-                    
+
                     C::SimulatorCore::Ptr getDelegate() const;
                     std::string getCoreName() const;
                     std::string getCoreVersion() const;

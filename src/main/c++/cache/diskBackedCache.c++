@@ -4,10 +4,10 @@
 #include <iostream>
 
 namespace Core = Tyrant::Core;
-namespace TyrantCache {
+namespace Tyrant {
     namespace Cache {
 
-        DiskBackedCache::DiskBackedCache(SimulatorCore::Ptr & delegate)
+        DiskBackedCache::DiskBackedCache(Core::SimulatorCore::Ptr delegate)
         : SimulatorCache(delegate)
         , ignoreCoreVersion(true)
         , ignoreXMLVersion(true)

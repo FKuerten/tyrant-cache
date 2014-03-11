@@ -88,8 +88,8 @@ namespace Tyrant {
             )
         {
             assertX(task.defender);
-            if (MultiDeckTemplate::Ptr defender =
-                std::dynamic_pointer_cast<MultiDeckTemplate>(task.defender)
+            if (MultiDeckTemplate::ConstPtr defender =
+                std::dynamic_pointer_cast<MultiDeckTemplate const>(task.defender)
                )
             {
                 assertX(defender);
