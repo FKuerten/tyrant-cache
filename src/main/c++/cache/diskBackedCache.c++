@@ -201,7 +201,7 @@ namespace TyrantCache {
                 this->selectAllDefenderStatement->bindText(3, xmlVersion.str());
             }
 
-            this->randomData = static_cast<unsigned int>(time(0));
+            this->randomData = static_cast<unsigned int>(time(nullptr));
         }
 
         DiskBackedCache::~DiskBackedCache()
@@ -219,8 +219,8 @@ namespace TyrantCache {
             }
             this->selectStatement->bindText(4, *(task.attacker));
             this->selectStatement->bindText(5, *(task.defender));
-            this->selectStatement->bindInt(6, task.surge);
-            this->selectStatement->bindInt(7, task.delayFirstAttacker);
+            this->selectStatement->bindBool(6, task.surge);
+            this->selectStatement->bindBool(7, task.delayFirstAttacker);
             this->selectStatement->bindInt(8, task.battleGround);
             this->selectStatement->bindInt(9, task.achievement);
             this->selectStatement->bindInt(10, task.numberOfRounds);
@@ -268,8 +268,8 @@ namespace TyrantCache {
             if(this->writeToCache) {
                 this->insertStatement->bindText(4, *(task.attacker));
                 this->insertStatement->bindText(5, *(task.defender));
-                this->insertStatement->bindInt(6, task.surge);
-                this->insertStatement->bindInt(7, task.delayFirstAttacker);
+                this->insertStatement->bindBool(6, task.surge);
+                this->insertStatement->bindBool(7, task.delayFirstAttacker);
                 this->insertStatement->bindInt(8, task.battleGround);
                 this->insertStatement->bindInt(9, task.achievement);
                 this->insertStatement->bindInt(10, task.numberOfRounds);
@@ -366,17 +366,18 @@ namespace TyrantCache {
                 //assertX(task.attacker);
                 statement->bindText(4, *(task.attacker));
             }
-            statement->bindInt(5, task.surge);
-            statement->bindInt(6, task.delayFirstAttacker);
+            statement->bindBool(5, task.surge);
+            statement->bindBool(6, task.delayFirstAttacker);
             statement->bindInt(7, task.battleGround);
             statement->bindInt(8, task.achievement);
             statement->bindInt(9, task.numberOfRounds);
             if (task.useRaidRules == Core::tristate::UNDEFINED) {
-                this->selectStatement->bindNull(11);
+                //std::clog << "useRaidRules == UNDEFINED" << std::endl;
+                this->selectStatement->bindInt(11, 2);
             } else if (task.useRaidRules == Core::tristate::TRUE) {
-                this->selectStatement->bindInt(11, true);
+                this->selectStatement->bindInt(11, 1);
             } else {
-                this->selectStatement->bindInt(11, false);
+                this->selectStatement->bindInt(11, 0);
             }
 
             S::SQLResults sqlResults = statement->query();

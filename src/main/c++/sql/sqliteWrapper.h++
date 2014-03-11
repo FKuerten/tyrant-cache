@@ -9,7 +9,7 @@
     #include <vector>
     #include <set>
     #include <sqlite3.h>
-    
+
 
     namespace TyrantCache {
         namespace SQL {
@@ -46,13 +46,17 @@
             class PreparedStatement {
                 private:
                     sqlite3_stmt * statement;
-                    
+
                 public:
                     PreparedStatement(sqlite3_stmt *);
                     ~PreparedStatement();
 
                     void bindText(unsigned int index, std::string text);
+                    void bindBool(unsigned int index, bool value);
                     void bindInt(unsigned int index, int value);
+                    void bindInt(unsigned int index, unsigned int value);
+                    void bindInt(unsigned int index, long int value);
+                    void bindInt(unsigned int index, unsigned long int value);
                     void bindNull(unsigned int index);
                     void execute();
                     SQLResults query();
@@ -94,10 +98,10 @@
                      * (To execute a prepared statement see PreparedStatement's methods)
                      */
                     void execute(Statement const &);
-                    
+
             };
-            
+
         }
     }
-        
+
 #endif

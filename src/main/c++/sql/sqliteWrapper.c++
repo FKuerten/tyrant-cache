@@ -40,7 +40,7 @@ namespace TyrantCache {
         PreparedStatement::PreparedStatement(sqlite3_stmt * statement)
         : statement(statement)
         {
-            assertX(this->statement != NULL);            
+            assertX(this->statement != NULL);
         }
 
         PreparedStatement::~PreparedStatement()
@@ -55,7 +55,7 @@ namespace TyrantCache {
                                    )
         {
             assertX(this->statement != NULL);
-            int resultCode = sqlite3_bind_text(this->statement, index, value.c_str(), -1, SQLITE_TRANSIENT);
+            int resultCode = sqlite3_bind_text(this->statement, static_cast<int>(index), value.c_str(), -1, SQLITE_TRANSIENT);
             if (resultCode != SQLITE_OK) {
                 std::stringstream ssMessage;
                 ssMessage << "Cannot bind parameter index ";
@@ -65,13 +65,22 @@ namespace TyrantCache {
                 throw Exception(ssMessage.str());
             }
         }
+
+        void
+        PreparedStatement::bindBool(unsigned int index
+                                   ,bool value
+                                   )
+        {
+            this->bindInt(index, static_cast<int>(value));
+        }
+
         void
         PreparedStatement::bindInt(unsigned int index
                                   ,int value
                                   )
         {
-            assertX(this->statement != NULL);            
-            int resultCode = sqlite3_bind_int(this->statement, index, value);
+            assertX(this->statement != NULL);
+            int resultCode = sqlite3_bind_int(this->statement, static_cast<int>(index), value);
             if (resultCode != SQLITE_OK) {
                 std::stringstream ssMessage;
                 ssMessage << "Cannot bind parameter index ";
@@ -81,12 +90,30 @@ namespace TyrantCache {
                 throw Exception(ssMessage.str());
             }
         }
+
+        void
+        PreparedStatement::bindInt(unsigned int index
+                                  ,long value
+                                  )
+        {
+            assertX(this->statement != NULL);
+            int resultCode = sqlite3_bind_int64(this->statement, static_cast<int>(index), value);
+            if (resultCode != SQLITE_OK) {
+                std::stringstream ssMessage;
+                ssMessage << "Cannot bind parameter index ";
+                ssMessage << index << " with value " << value;
+                ssMessage << " to prepared statement";
+                ssMessage << ", error code " << resultCode << ".";
+                throw Exception(ssMessage.str());
+            }
+        }
+
         void
         PreparedStatement::bindNull(unsigned int index
                                    )
         {
-            assertX(this->statement != NULL);            
-            int resultCode = sqlite3_bind_null(this->statement, index);
+            assertX(this->statement != NULL);
+            int resultCode = sqlite3_bind_null(this->statement, static_cast<int>(index));
             if (resultCode != SQLITE_OK) {
                 std::stringstream ssMessage;
                 ssMessage << "Cannot bind parameter index ";
@@ -119,7 +146,7 @@ namespace TyrantCache {
         SQLResults
         PreparedStatement::query()
         {
-            unsigned int const columnCount = sqlite3_column_count(this->statement);
+            int const columnCount = sqlite3_column_count(this->statement);
             SQLResults sqlResults;
             do {
                 int resultCode = sqlite3_step(this->statement);
@@ -142,7 +169,7 @@ namespace TyrantCache {
                 }
                 //std::clog << "Got a chunk from database!" << std::endl;
                 SQLResult sqlResult;
-                for(unsigned int i = 0; i < columnCount; i++) {
+                for(int i = 0; i < columnCount; i++) {
                     std::string data = reinterpret_cast<char const *>(sqlite3_column_text(this->statement, i));
                     std::string name = sqlite3_column_name(this->statement, i);
                     sqlResult.put(name,data);
@@ -181,7 +208,7 @@ namespace TyrantCache {
         SQLiteWrapper::prepareStatement(Statement const & statement)
         {
             sqlite3_stmt *pStmt;
-            int resultCode = sqlite3_prepare_v2(this->database, statement.c_str(), -1, &pStmt, NULL);
+            int resultCode = sqlite3_prepare_v2(this->database, statement.c_str(), -1, &pStmt, nullptr);
             if (resultCode != SQLITE_OK) {
                 std::stringstream ssMessage;
                 ssMessage << "Cannot prepare statement " << std::endl;
@@ -206,14 +233,14 @@ namespace TyrantCache {
         SQLiteWrapper::execute(Statement const & statement)
         {
             char * cErrorMessage;
-            int rc = sqlite3_exec(this->database, statement.c_str(), NULL, 0, &cErrorMessage);
+            int rc = sqlite3_exec(this->database, statement.c_str(), nullptr, nullptr, &cErrorMessage);
             if (rc != SQLITE_OK) {
                 std::string errorMessage(cErrorMessage);
                 sqlite3_free(cErrorMessage);
                 throw Exception("SQLite3 Error: " + errorMessage);
             }
         }
-        
+
     }
 }
-    
+
