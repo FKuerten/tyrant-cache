@@ -3,6 +3,7 @@
 #include <errorHandling/assert.h++>
 #include <sstream>
 #include <boost/lexical_cast.hpp>
+#include <iostream>
 
 namespace TyrantCache {
     namespace SQL {
