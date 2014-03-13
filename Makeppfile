@@ -16,8 +16,6 @@
 #   along with this program (COPYING.GPL).  If not, see
 #   <http://www.gnu.org/licenses/>.
 #
+makepp_no_builtin = 1
 
-MODULEDIR=.
-include config.mk
-include scripts/module.mk
 include scripts/library.mk
