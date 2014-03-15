@@ -67,14 +67,14 @@ namespace Tyrant {
             ,double factor
             )
         {
-            result.numberOfGames *= factor;
-            result.gamesWon *= factor;
-            result.gamesStalled *= factor;
-            result.gamesLost *= factor;
-            result.pointsAttacker *= factor;
-            result.pointsAttackerAuto *= factor;
-            result.pointsDefender *= factor;
-            result.pointsDefenderAuto *= factor;
+            result.numberOfGames = static_cast<unsigned long>(result.numberOfGames * factor);
+            result.gamesWon = static_cast<unsigned long>(result.gamesWon * factor);
+            result.gamesStalled = static_cast<unsigned long>(result.gamesStalled * factor);
+            result.gamesLost = static_cast<unsigned long>(result.gamesLost * factor);
+            result.pointsAttacker = static_cast<unsigned long>(result.pointsAttacker * factor);
+            result.pointsAttackerAuto = static_cast<unsigned long>(result.pointsAttackerAuto * factor);
+            result.pointsDefender = static_cast<unsigned long>(result.pointsDefender * factor);
+            result.pointsDefenderAuto = static_cast<unsigned long>(result.pointsDefenderAuto * factor);
             return result;
         }
 
