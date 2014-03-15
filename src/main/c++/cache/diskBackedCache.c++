@@ -53,21 +53,23 @@ namespace Tyrant {
                 database.execute(ssCreateTable.str());
             }
 
-            std::stringstream ssCreateIndex;
-            ssCreateIndex << "CREATE INDEX IF NOT EXISTS ";
-            ssCreateIndex << "task";
-            ssCreateIndex << " ON ";
-            ssCreateIndex << "TyrantCache";
-            ssCreateIndex << " (" << "attacker";
-            ssCreateIndex << " ," << "defender";
-            ssCreateIndex << " ," << "surge";
-            ssCreateIndex << " ," << "delayFirstCard";
-            ssCreateIndex << " ," << "battleGroundId";
-            ssCreateIndex << " ," << "achievementId";
-            ssCreateIndex << " ," << "numberOfRounds";
-            ssCreateIndex << " ," << "useRaidRules";
-            ssCreateIndex << ")";
-            database.execute(ssCreateIndex.str());
+            {
+                std::stringstream ssCreateIndex;
+                ssCreateIndex << "CREATE INDEX IF NOT EXISTS ";
+                ssCreateIndex << "task";
+                ssCreateIndex << " ON ";
+                ssCreateIndex << "TyrantCache";
+                ssCreateIndex << " (" << "attacker";
+                ssCreateIndex << " ," << "defender";
+                ssCreateIndex << " ," << "surge";
+                ssCreateIndex << " ," << "delayFirstCard";
+                ssCreateIndex << " ," << "battleGroundId";
+                ssCreateIndex << " ," << "achievementId";
+                ssCreateIndex << " ," << "numberOfRounds";
+                ssCreateIndex << " ," << "useRaidRules";
+                ssCreateIndex << ")";
+                database.execute(ssCreateIndex.str());
+            }
 
             {
                 std::stringstream ssInsert;
