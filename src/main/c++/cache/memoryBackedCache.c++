@@ -1,6 +1,9 @@
 #include "memoryBackedCache.h++"
 #include <functional>
 #include <iostream>
+#include <vector>
+#include <set>
+#include <boost/functional/hash.hpp>
 
 namespace Tyrant {
     namespace Cache {
@@ -15,8 +18,8 @@ namespace Tyrant {
                 && a.delayFirstAttacker == b.delayFirstAttacker
                 && a.battleGround == b.battleGround
                 && a.achievement == b.achievement
-                && std::string(*a.attacker) == std::string(*b.attacker)
-                && std::string(*a.defender) == std::string(*b.defender)
+                && (*a.attacker == *b.attacker)
+                && (*a.defender == *b.defender)
                 && a.numberOfRounds == b.numberOfRounds;
         }
 
@@ -25,17 +28,17 @@ namespace Tyrant {
             (Core::SimulationTask const & t
             ) const
         {
-            std::hash<bool> bh;
-            std::hash<signed int> sih;
-            std::hash<std::string> sh;
-            size_t hash = 0;
-            hash *= 3u + bh(t.surge);
-            hash *= 3u + bh(t.delayFirstAttacker);
-            hash *= 3u + sih(t.battleGround);
-            hash *= 3u + sih(t.achievement);
-            hash *= 3u + sh(std::string(*t.attacker));
-            hash *= 3u + sh(std::string(*t.defender));
-            hash *= 3u + sih(t.numberOfRounds);
+            //std::hash<bool> bh;
+            //std::hash<signed int> sih;
+            //std::hash<std::string> sh;
+            std::size_t hash = 0;
+            boost::hash_combine(hash, t.surge);
+            boost::hash_combine(hash, t.delayFirstAttacker);
+            boost::hash_combine(hash, t.battleGround);
+            boost::hash_combine(hash, t.achievement);
+            boost::hash_combine(hash, *t.attacker);
+            boost::hash_combine(hash, *t.defender);
+            boost::hash_combine(hash, t.numberOfRounds);
             return hash;
         }
 
@@ -45,7 +48,40 @@ namespace Tyrant {
         {}
 
         MemoryBackedCache::~MemoryBackedCache()
-        {}
+        {
+            bool const DEBUG_CHECK_HASH = false;
+            if (DEBUG_CHECK_HASH) {
+                // Check the collisions for each hash
+                std::vector<Core::SimulationTask> keys;
+                for (auto entry : this->cache) {
+                    keys.push_back(entry.first);
+                }
+                std::set<size_t> hashsDone;
+                Hash hash;
+                unsigned int const size = keys.size();
+                for (size_t i = 0; i+1 < size; i++) {
+                    bool found = false;
+                    size_t const hashI = hash(keys[i]);
+                    if (hashsDone.find(hashI) == hashsDone.end()) {
+                        for (size_t j = i+1; j < size; j++) {
+                            size_t const hashJ = hash(keys[j]);
+                            if(hashI == hashJ) {
+                                if (!found) {
+                                    std::clog << "Same hash " << hashI << ": "
+                                              << std::string(*keys[i].attacker);
+                                    found = true;
+                                }
+                                std::clog << ", " << std::string(*keys[j].attacker);
+                            }
+                        }
+                        if (found) {
+                            std::clog << std::endl;
+                            hashsDone.insert(hashI);
+                        }
+                    }
+                }
+            }
+        }
 
         Core::SimulationResult
         MemoryBackedCache::simulate(Core::SimulationTask const & task)
