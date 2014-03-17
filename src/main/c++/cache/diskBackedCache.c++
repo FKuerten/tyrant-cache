@@ -219,8 +219,8 @@ namespace Tyrant {
             if(!this->readFromCache) {
                 return Core::SimulationResult();
             }
-            this->selectStatement->bindText(4, *(task.attacker));
-            this->selectStatement->bindText(5, *(task.defender));
+            this->selectStatement->bindText(4, std::string(*task.attacker));
+            this->selectStatement->bindText(5, std::string(*task.defender));
             this->selectStatement->bindBool(6, task.surge);
             this->selectStatement->bindBool(7, task.delayFirstAttacker);
             this->selectStatement->bindInt(8, task.battleGround);
@@ -268,8 +268,8 @@ namespace Tyrant {
                                    )
         {
             if(this->writeToCache) {
-                this->insertStatement->bindText(4, *(task.attacker));
-                this->insertStatement->bindText(5, *(task.defender));
+                this->insertStatement->bindText(4, std::string(*task.attacker));
+                this->insertStatement->bindText(5, std::string(*task.defender));
                 this->insertStatement->bindBool(6, task.surge);
                 this->insertStatement->bindBool(7, task.delayFirstAttacker);
                 this->insertStatement->bindInt(8, task.battleGround);
@@ -363,10 +363,10 @@ namespace Tyrant {
             S::PreparedStatement * statement =  wildCardAttacker ? this->selectAllAttackerStatement : this->selectAllDefenderStatement;
             if (wildCardAttacker) {
                 //assertX(task.defender);
-                statement->bindText(4, *(task.defender));
+                statement->bindText(4, std::string(*task.defender));
             } else {
                 //assertX(task.attacker);
-                statement->bindText(4, *(task.attacker));
+                statement->bindText(4, std::string(*task.attacker));
             }
             statement->bindBool(5, task.surge);
             statement->bindBool(6, task.delayFirstAttacker);
