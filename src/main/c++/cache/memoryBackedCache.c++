@@ -58,7 +58,7 @@ namespace Tyrant {
                 }
                 std::set<size_t> hashsDone;
                 Hash hash;
-                unsigned int const size = keys.size();
+                size_t const size = keys.size();
                 for (size_t i = 0; i+1 < size; i++) {
                     bool found = false;
                     size_t const hashI = hash(keys[i]);

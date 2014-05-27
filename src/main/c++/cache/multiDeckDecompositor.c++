@@ -64,17 +64,17 @@ namespace Tyrant {
         SimulationResult &
         operator*=
             (SimulationResult & result
-            ,double factor
+            ,long double factor
             )
         {
-            result.numberOfGames = static_cast<unsigned long>(result.numberOfGames * factor);
-            result.gamesWon = static_cast<unsigned long>(result.gamesWon * factor);
-            result.gamesStalled = static_cast<unsigned long>(result.gamesStalled * factor);
-            result.gamesLost = static_cast<unsigned long>(result.gamesLost * factor);
-            result.pointsAttacker = static_cast<unsigned long>(result.pointsAttacker * factor);
-            result.pointsAttackerAuto = static_cast<unsigned long>(result.pointsAttackerAuto * factor);
-            result.pointsDefender = static_cast<unsigned long>(result.pointsDefender * factor);
-            result.pointsDefenderAuto = static_cast<unsigned long>(result.pointsDefenderAuto * factor);
+            result.numberOfGames = static_cast<size_t>(result.numberOfGames * factor);
+            result.gamesWon = static_cast<size_t>(result.gamesWon * factor);
+            result.gamesStalled = static_cast<size_t>(result.gamesStalled * factor);
+            result.gamesLost = static_cast<size_t>(result.gamesLost * factor);
+            result.pointsAttacker = static_cast<size_t>(result.pointsAttacker * factor);
+            result.pointsAttackerAuto = static_cast<size_t>(result.pointsAttackerAuto * factor);
+            result.pointsDefender = static_cast<size_t>(result.pointsDefender * factor);
+            result.pointsDefenderAuto = static_cast<size_t>(result.pointsDefenderAuto * factor);
             return result;
         }
 
@@ -103,7 +103,7 @@ namespace Tyrant {
                     size_t const currentDeckCount = decks.count(currentDeck);
                     //std::clog << "current deck: " << currentDeck->toString() << " cardinality " << currentDeckCount << std::endl;
                     unsigned long currentIterations = static_cast<unsigned int>(std::ceil(
-                                                        static_cast<double>(numberOfIterations)
+                                                        static_cast<long double>(numberOfIterations)
                                                         * currentDeckCount
                                                         / totalCount
                                                       ));
