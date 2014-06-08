@@ -4,10 +4,10 @@
 #include <iostream>
 
 namespace Core = Tyrant::Core;
-namespace TyrantCache {
+namespace Tyrant {
     namespace Cache {
 
-        DiskBackedCache::DiskBackedCache(SimulatorCore::Ptr & delegate)
+        DiskBackedCache::DiskBackedCache(Core::SimulatorCore::Ptr delegate)
         : SimulatorCache(delegate)
         , ignoreCoreVersion(true)
         , ignoreXMLVersion(true)
@@ -53,21 +53,23 @@ namespace TyrantCache {
                 database.execute(ssCreateTable.str());
             }
 
-            std::stringstream ssCreateIndex;
-            ssCreateIndex << "CREATE INDEX IF NOT EXISTS ";
-            ssCreateIndex << "task";
-            ssCreateIndex << " ON ";
-            ssCreateIndex << "TyrantCache";
-            ssCreateIndex << " (" << "attacker";
-            ssCreateIndex << " ," << "defender";
-            ssCreateIndex << " ," << "surge";
-            ssCreateIndex << " ," << "delayFirstCard";
-            ssCreateIndex << " ," << "battleGroundId";
-            ssCreateIndex << " ," << "achievementId";
-            ssCreateIndex << " ," << "numberOfRounds";
-            ssCreateIndex << " ," << "useRaidRules";
-            ssCreateIndex << ")";
-            database.execute(ssCreateIndex.str());
+            {
+                std::stringstream ssCreateIndex;
+                ssCreateIndex << "CREATE INDEX IF NOT EXISTS ";
+                ssCreateIndex << "task";
+                ssCreateIndex << " ON ";
+                ssCreateIndex << "TyrantCache";
+                ssCreateIndex << " (" << "attacker";
+                ssCreateIndex << " ," << "defender";
+                ssCreateIndex << " ," << "surge";
+                ssCreateIndex << " ," << "delayFirstCard";
+                ssCreateIndex << " ," << "battleGroundId";
+                ssCreateIndex << " ," << "achievementId";
+                ssCreateIndex << " ," << "numberOfRounds";
+                ssCreateIndex << " ," << "useRaidRules";
+                ssCreateIndex << ")";
+                database.execute(ssCreateIndex.str());
+            }
 
             {
                 std::stringstream ssInsert;
@@ -201,7 +203,7 @@ namespace TyrantCache {
                 this->selectAllDefenderStatement->bindText(3, xmlVersion.str());
             }
 
-            this->randomData = static_cast<unsigned int>(time(0));
+            this->randomData = static_cast<unsigned int>(time(nullptr));
         }
 
         DiskBackedCache::~DiskBackedCache()
@@ -217,10 +219,10 @@ namespace TyrantCache {
             if(!this->readFromCache) {
                 return Core::SimulationResult();
             }
-            this->selectStatement->bindText(4, *(task.attacker));
-            this->selectStatement->bindText(5, *(task.defender));
-            this->selectStatement->bindInt(6, task.surge);
-            this->selectStatement->bindInt(7, task.delayFirstAttacker);
+            this->selectStatement->bindText(4, std::string(*task.attacker));
+            this->selectStatement->bindText(5, std::string(*task.defender));
+            this->selectStatement->bindBool(6, task.surge);
+            this->selectStatement->bindBool(7, task.delayFirstAttacker);
             this->selectStatement->bindInt(8, task.battleGround);
             this->selectStatement->bindInt(9, task.achievement);
             this->selectStatement->bindInt(10, task.numberOfRounds);
@@ -266,10 +268,10 @@ namespace TyrantCache {
                                    )
         {
             if(this->writeToCache) {
-                this->insertStatement->bindText(4, *(task.attacker));
-                this->insertStatement->bindText(5, *(task.defender));
-                this->insertStatement->bindInt(6, task.surge);
-                this->insertStatement->bindInt(7, task.delayFirstAttacker);
+                this->insertStatement->bindText(4, std::string(*task.attacker));
+                this->insertStatement->bindText(5, std::string(*task.defender));
+                this->insertStatement->bindBool(6, task.surge);
+                this->insertStatement->bindBool(7, task.delayFirstAttacker);
                 this->insertStatement->bindInt(8, task.battleGround);
                 this->insertStatement->bindInt(9, task.achievement);
                 this->insertStatement->bindInt(10, task.numberOfRounds);
@@ -281,14 +283,14 @@ namespace TyrantCache {
                 } else {
                     this->insertStatement->bindInt(11, 0);
                 }
-                this->insertStatement->bindInt(12, freshResult.numberOfGames);
-                this->insertStatement->bindInt(13, freshResult.gamesWon);
-                this->insertStatement->bindInt(14, freshResult.gamesStalled);
-                this->insertStatement->bindInt(15, freshResult.gamesLost);
-                this->insertStatement->bindInt(16, freshResult.pointsAttacker);
-                this->insertStatement->bindInt(17, freshResult.pointsAttackerAuto);
-                this->insertStatement->bindInt(18, freshResult.pointsDefender);
-                this->insertStatement->bindInt(19, freshResult.pointsDefenderAuto);
+                this->insertStatement->bindInt(12, static_cast<signed long>(freshResult.numberOfGames));
+                this->insertStatement->bindInt(13, static_cast<signed long>(freshResult.gamesWon));
+                this->insertStatement->bindInt(14, static_cast<signed long>(freshResult.gamesStalled));
+                this->insertStatement->bindInt(15, static_cast<signed long>(freshResult.gamesLost));
+                this->insertStatement->bindInt(16, static_cast<signed long>(freshResult.pointsAttacker));
+                this->insertStatement->bindInt(17, static_cast<signed long>(freshResult.pointsAttackerAuto));
+                this->insertStatement->bindInt(18, static_cast<signed long>(freshResult.pointsDefender));
+                this->insertStatement->bindInt(19, static_cast<signed long>(freshResult.pointsDefenderAuto));
                 this->insertStatement->execute();
                 //std::clog << "Wrote " << freshResult.numberOfGames << " to cache" << std::endl;
             }
@@ -361,22 +363,23 @@ namespace TyrantCache {
             S::PreparedStatement * statement =  wildCardAttacker ? this->selectAllAttackerStatement : this->selectAllDefenderStatement;
             if (wildCardAttacker) {
                 //assertX(task.defender);
-                statement->bindText(4, *(task.defender));
+                statement->bindText(4, std::string(*task.defender));
             } else {
                 //assertX(task.attacker);
-                statement->bindText(4, *(task.attacker));
+                statement->bindText(4, std::string(*task.attacker));
             }
-            statement->bindInt(5, task.surge);
-            statement->bindInt(6, task.delayFirstAttacker);
+            statement->bindBool(5, task.surge);
+            statement->bindBool(6, task.delayFirstAttacker);
             statement->bindInt(7, task.battleGround);
             statement->bindInt(8, task.achievement);
             statement->bindInt(9, task.numberOfRounds);
             if (task.useRaidRules == Core::tristate::UNDEFINED) {
-                this->selectStatement->bindNull(11);
+                //std::clog << "useRaidRules == UNDEFINED" << std::endl;
+                this->selectStatement->bindInt(11, 2);
             } else if (task.useRaidRules == Core::tristate::TRUE) {
-                this->selectStatement->bindInt(11, true);
+                this->selectStatement->bindInt(11, 1);
             } else {
-                this->selectStatement->bindInt(11, false);
+                this->selectStatement->bindInt(11, 0);
             }
 
             S::SQLResults sqlResults = statement->query();
